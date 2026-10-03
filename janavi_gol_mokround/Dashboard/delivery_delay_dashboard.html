@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Delivery Delay Analysis – Set A</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7fb;--card:#fff;--ink:#14181f;--mut:#667085;--line:#e4e7ee;--acc:#d92d3f;--acc2:#2563eb;--ok:#16a34a;--soft:#fdecee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--card:#181c25;--ink:#eef0f5;--mut:#98a1b3;--line:#272d3a;--soft:#2a1a1f}}
+:root[data-theme="dark"]{--bg:#0f1218;--card:#181c25;--ink:#eef0f5;--mut:#98a1b3;--line:#272d3a;--soft:#2a1a1f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}
+.app{display:flex;min-height:100vh}
+aside{width:210px;background:var(--card);border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand{display:flex;gap:10px;align-items:center;font-weight:700;margin:0 6px 22px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--acc);color:#fff;display:grid;place-items:center}
+.brand small{display:block;color:var(--mut);font-weight:500;font-size:11px}
+nav button{all:unset;display:flex;gap:10px;align-items:center;width:100%;padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--mut);font-weight:600;margin-bottom:4px}
+nav button:hover{background:var(--bg)}nav button.on{background:var(--soft);color:var(--acc)}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+main{flex:1;padding:22px 26px;min-width:0;max-width:1200px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:21px;margin:0 0 4px}.sub{color:var(--mut);font-size:13px}
+.tag{background:var(--soft);color:var(--acc);padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.slicers{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.grp>span{color:var(--mut);font-weight:600;font-size:12px;display:flex;gap:5px;align-items:center;margin-right:2px}
+.chip{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-weight:600;font-size:13px}
+.chip:hover{border-color:var(--acc)}.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.chip svg{width:14px;height:14px}
+.reset{margin-left:auto;color:var(--acc2)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kpi{display:flex;gap:14px;align-items:center}
+.ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;flex-shrink:0}
+.kpi b{font-size:26px;display:block;line-height:1.1}.kpi span{color:var(--mut);font-size:12px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
+h3{margin:0 0 12px;font-size:14px;display:flex;gap:8px;align-items:center}
+.bars{display:flex;align-items:flex-end;gap:18px;height:190px;padding:6px 8px 0;border-bottom:1px solid var(--line)}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.col .b{width:100%;max-width:70px;border-radius:8px 8px 0 0;background:var(--acc2);min-height:2px;transition:height .35s}
+.col .v{font-weight:700;margin-bottom:4px}.col.hl .b{background:var(--acc)}
+.labels{display:flex;gap:18px;padding:6px 8px 0;color:var(--mut);font-size:12px;font-weight:600}.labels div{flex:1;text-align:center}
+.ins{display:grid;gap:10px}.ins div{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;background:var(--bg)}
+.ins svg{color:var(--acc);margin-top:1px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-size:12px}.wrap{overflow-x:auto}
+.pill{padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700}.red{background:var(--soft);color:var(--acc)}.grn{background:#dcfce7;color:var(--ok)}
+tr.dup td{text-decoration:line-through;color:var(--mut);background:var(--soft)}
+.page{display:none}.page.on{display:block}
+.rules{display:grid;gap:8px;padding-left:18px;margin:0}
+@media(max-width:760px){.app{flex-direction:column}aside{width:100%;height:auto;position:static;display:flex;align-items:center;gap:6px;padding:10px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+.brand{margin:0 8px 0 0}.brand small{display:none}nav{display:flex;gap:4px}nav button{white-space:nowrap;width:auto}main{padding:14px}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></symbol>
+<symbol id="route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8a4 4 0 000-8H8a4 4 0 010-8h8"/></symbol>
+<symbol id="db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+<symbol id="truck" viewBox="0 0 24 24"><path d="M1 4h13v12H1zM14 8h5l4 4v4h-9"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="pct" viewBox="0 0 24 24"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="all" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+<symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/></symbol>
+<symbol id="reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3M3 4v5h5"/></symbol>
+<symbol id="bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/></symbol>
+<symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></symbol>
+<symbol id="moon" viewBox="0 0 24 24"><path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/></symbol>
+</defs></svg>
+<div class="app">
+<aside><div class="brand"><div class="logo"><svg class="i"><use href="#truck"/></svg></div><div>Delay Analytics<small>Red &amp; White · Set A</small></div></div>
+<nav>
+<button class="on" data-p="ov"><svg class="i"><use href="#home"/></svg>Overview</button>
+<button data-p="rt"><svg class="i"><use href="#route"/></svg>Routes &amp; Hubs</button>
+<button data-p="dt"><svg class="i"><use href="#db"/></svg>Data &amp; Rules</button>
+<button id="theme"><svg class="i"><use href="#moon"/></svg>Theme</button>
+</nav></aside>
+<main>
+<header><div><h1>Delivery Delay Analysis</h1><div class="sub">Which service type has the greatest delay burden, and which hub needs priority attention?</div></div><span class="tag">12 clean records · Jan–Mar</span></header>
+<div class="slicers">
+<div class="grp"><span><svg class="i"><use href="#pin"/></svg>Hub</span><span id="hubs" class="grp"></span></div>
+<div class="grp"><span><svg class="i"><use href="#box"/></svg>Service</span><span id="svcs" class="grp"></span></div>
+<button class="chip reset" id="rst"><svg class="i"><use href="#reset"/></svg>Clear filters</button>
+</div>
+
+<section class="page on" id="ov">
+<div class="kpis">
+<div class="card kpi"><div class="ico" style="background:var(--acc2)"><svg class="i"><use href="#box"/></svg></div><div><span>Delivery Count</span><b id="k1"></b></div></div>
+<div class="card kpi"><div class="ico" style="background:var(--acc)"><svg class="i"><use href="#clock"/></svg></div><div><span>Total Delay Days</span><b id="k2"></b></div></div>
+<div class="card kpi"><div class="ico" style="background:#f59e0b"><svg class="i"><use href="#pct"/></svg></div><div><span>Delay Incidence Rate</span><b id="k3"></b></div></div>
+</div>
+<div class="grid">
+<div class="card"><h3><svg class="i"><use href="#bolt"/></svg>Total Delay Days by Service Type</h3><div class="bars" id="c1"></div><div class="labels" id="l1"></div></div>
+<div class="card"><h3><svg class="i"><use href="#cal"/></svg>Monthly Trend (Jan → Feb → Mar)</h3><div class="bars" id="c2"></div><div class="labels" id="l2"></div></div>
+</div>
+<div class="card"><h3><svg class="i"><use href="#bulb"/></svg>Key Insights (unfiltered = report findings)</h3><div class="ins" id="ins"></div></div>
+</section>
+
+<section class="page" id="rt">
+<div class="grid">
+<div class="card"><h3><svg class="i"><use href="#pin"/></svg>Total Delay Days by Hub</h3><div class="bars" id="c3"></div><div class="labels" id="l3"></div></div>
+<div class="card"><h3><svg class="i"><use href="#route"/></svg>Route Summary <span class="sub">(Priority = delay &gt; 8)</span></h3><div class="wrap"><table id="rtb"></table></div></div>
+</div></section>
+
+<section class="page" id="dt">
+<div class="grid">
+<div class="card"><h3><svg class="i"><use href="#db"/></svg>Raw deliveries (13) → Clean (12)</h3><div class="wrap"><table id="raw"></table></div></div>
+<div class="card"><h3><svg class="i"><use href="#bulb"/></svg>Metric definitions</h3><ol class="rules">
+<li><b>delay_days</b> = MAX(actual_days − promised_days, 0)</li>
+<li><b>Delay incidence rate</b> = rows with actual &gt; promised ÷ all rows</li>
+<li>Duplicate record_id 12 removed → 12 unique rows</li>
+<li>Join key: route_id (routes 1 → many deliveries)</li>
+<li>Rates use underlying counts, not averaged percentages</li>
+<li><b>Reconciliation:</b> Standard total = <b id="rec"></b> (match Excel, SQL, Python, Power BI)</li></ol></div>
+</div></section>
+</main></div>
+<script>
+const R={R1:['Metro Link','Express'],R2:['City Dash','Express'],R3:['Highway Freight','Standard'],R4:['Rural Feeder','Standard']};
+const RAW=[[1,'Jan','R1','Mumbai',2,2],[2,'Jan','R2','Chennai',3,4],[3,'Jan','R3','Delhi',5,8],[4,'Jan','R4','Mumbai',6,10],[5,'Feb','R1','Chennai',2,5],[6,'Feb','R2','Delhi',3,3],[7,'Feb','R3','Delhi',5,10],[8,'Feb','R4','Chennai',6,7],[9,'Mar','R1','Delhi',2,8],[10,'Mar','R2','Mumbai',3,5],[11,'Mar','R3','Chennai',5,5],[12,'Mar','R4','Mumbai',6,15],[12,'Mar','R4','Mumbai',6,15]];
+const rows=RAW.slice(0,12).map(r=>({id:r[0],m:r[1],rt:r[2],hub:r[3],p:r[4],a:r[5],svc:R[r[2]][1],d:Math.max(r[5]-r[4],0)}));
+const M=['Jan','Feb','Mar'],H=['Chennai','Delhi','Mumbai'],S=['Express','Standard'];
+let st={hub:'All',svc:'All'};
+const $=id=>document.getElementById(id),sum=a=>a.reduce((x,y)=>x+y.d,0),f2=n=>n.toFixed(2);
+function chips(el,list,key,icon){el.innerHTML=['All',...list].map(v=>`<button class="chip ${st[key]===v?'on':''}" data-k="${key}" data-v="${v}"><svg class="i"><use href="#${v==='All'?'all':icon}"/></svg>${v}</button>`).join('')}
+function bars(c,l,items){const mx=Math.max(1,...items.map(i=>i.v)),top=Math.max(...items.map(i=>i.v));
+c.innerHTML=items.map(i=>`<div class="col ${i.v===top&&top>0?'hl':''}"><div class="v">${i.v}</div><div class="b" style="height:${i.v/mx*82}%"></div></div>`).join('');
+l.innerHTML=items.map(i=>`<div>${i.n}</div>`).join('')}
+function render(){
+chips($('hubs'),H,'hub','pin');chips($('svcs'),S,'svc','bolt');
+const f=rows.filter(r=>(st.hub==='All'||r.hub===st.hub)&&(st.svc==='All'||r.svc===st.svc));
+const t=sum(f),late=f.filter(r=>r.a>r.p).length;
+$('k1').textContent=f.length;$('k2').textContent=f2(t);$('k3').textContent=f.length?f2(late/f.length*100)+'%':'0.00%';
+bars($('c1'),$('l1'),S.map(s=>({n:s,v:sum(f.filter(r=>r.svc===s))})));
+bars($('c2'),$('l2'),M.map(m=>({n:m,v:sum(f.filter(r=>r.m===m))})));
+bars($('c3'),$('l3'),H.map(h=>({n:h,v:sum(f.filter(r=>r.hub===h))})));
+$('rtb').innerHTML='<tr><th>Route</th><th>Service</th><th>Records</th><th>Delay days</th><th>Status</th></tr>'+Object.keys(R).map(k=>{const x=f.filter(r=>r.rt===k),d=sum(x);return `<tr><td>${k} · ${R[k][0]}</td><td>${R[k][1]}</td><td>${x.length}</td><td><b>${d}</b></td><td><span class="pill ${d>8?'red':'grn'}">${d>8?'Priority':'OK'}</span></td></tr>`}).join('');
+const mx=(arr,fn)=>{const v=arr.map(fn);const m=Math.max(...v);return arr.filter((_,i)=>v[i]===m)};
+const sv=mx(S,s=>sum(f.filter(r=>r.svc===s))),hb=mx(H,h=>sum(f.filter(r=>r.hub===h))),rk=mx(Object.keys(R),k=>sum(f.filter(r=>r.rt===k)));
+const rs=sum(f.filter(r=>r.rt===rk[0]));
+$('ins').innerHTML=t?[
+['bolt',`<b>${sv.join(', ')}</b> has the greatest delay burden: ${sum(f.filter(r=>r.svc===sv[0]))} of ${t} delay days (${f2(sum(f.filter(r=>r.svc===sv[0]))/t*100)}%).`],
+['pin',`<b>${hb.join(', ')}</b> needs priority attention with ${sum(f.filter(r=>r.hub===hb[0]))} delay days.`],
+['route',`Route <b>${rk.join(', ')}</b> (${R[rk[0]][0]}) is the worst: ${rs} days = ${f2(rs/t*100)}% of total.`],
+['bulb',`<b>Recommendation:</b> prioritise Standard routes (Rural Feeder, Highway Freight) and the top hubs by delay. <i>Limitation:</i> summed days are cumulative record-level delay, not unique parcels.`]
+].map(i=>`<div><svg class="i"><use href="#${i[0]}"/></svg><span>${i[1]}</span></div>`).join(''):'<div>No records for this filter.</div>';
+$('rec').textContent=sum(rows.filter(r=>r.svc==='Standard'));
+}
+$('raw').innerHTML='<tr><th>ID</th><th>Month</th><th>Route</th><th>Hub</th><th>Promised</th><th>Actual</th><th>Delay</th></tr>'+RAW.map((r,i)=>`<tr class="${i===12?'dup':''}"><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${Math.max(r[5]-r[4],0)}${i===12?' · duplicate':''}</td></tr>`).join('');
+document.addEventListener('click',e=>{
+const c=e.target.closest('.chip[data-k]');if(c){st[c.dataset.k]=c.dataset.v;render()}
+const n=e.target.closest('nav button[data-p]');if(n){document.querySelectorAll('nav button[data-p]').forEach(b=>b.classList.toggle('on',b===n));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===n.dataset.p))}});
+$('rst').onclick=()=>{st={hub:'All',svc:'All'};render()};
+$('theme').onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0f1218';r.dataset.theme=d?'light':'dark'};
+render();
+</script></body></html>
